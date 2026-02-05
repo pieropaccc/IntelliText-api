@@ -1,5 +1,10 @@
 # IntelliText API 🎯
 
+You can try it for free here: http://intellitext-env.eba-ncfdeqer.sa-east-1.elasticbeanstalk.com/
+
+<img width="941" height="319" alt="image" src="https://github.com/user-attachments/assets/59a9c713-881a-4303-8882-a2ee59f2dd4e" />
+
+
 ![CI Status](https://img.shields.io/github/actions/workflow/status/pieropaccc/IntelliText-api/ci.yml?branch=Main)
 ![Node.js](https://img.shields.io/badge/node.js-20-339933?logo=node.js)
 ![Express](https://img.shields.io/badge/express-5.2.1-000000?logo=express)
