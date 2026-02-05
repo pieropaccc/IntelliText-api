@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntelliText API - AI Text Analysis</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0a1a;
+      --bg-secondary: #12122a;
+      --bg-card: #1a1a3a;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0c0;
+      --accent-primary: #6366f1;
+      --accent-secondary: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --border-color: rgba(99, 102, 241, 0.2);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
+      padding: 60px 20px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .logo-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--accent-gradient);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
+    }
+
+    .header h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .header p {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .version-badge {
+      display: inline-block;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--accent-secondary);
+      margin-top: 20px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Section Titles */
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 28px;
+      background: var(--accent-gradient);
+      border-radius: 2px;
+    }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 28px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2);
+    }
+
+    .feature-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--accent-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    /* Endpoints */
+    .endpoints-section {
+      margin-bottom: 60px;
+    }
+
+    .endpoint-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .endpoint-card:hover {
+      box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+    }
+
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+
+    .method {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .method.get {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .method.post {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--accent-primary);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .endpoint-path {
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    .endpoint-description {
+      margin-left: auto;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .endpoint-body {
+      padding: 24px;
+    }
+
+    .code-block {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow-x: auto;
+      margin-bottom: 16px;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .code-title {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+    }
+
+    pre {
+      padding: 16px;
+      font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      color: #e2e8f0;
+    }
+
+    /* Syntax Highlighting */
+    .keyword { color: #c084fc; }
+    .string { color: #34d399; }
+    .number { color: #fbbf24; }
+    .comment { color: #64748b; }
+    .property { color: #60a5fa; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .footer a {
+      color: var(--accent-secondary);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .header p {
+        font-size: 1rem;
+      }
+
+      .endpoint-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .endpoint-description {
+        margin-left: 0;
+      }
+
+      .section-title {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">📝</div>
+    </div>
+    <h1>¡Bienvenido a IntelliText API!</h1>
+    <p>Potencia tus aplicaciones con análisis de texto impulsado por inteligencia artificial. Extrae insights, clasifica contenido y comprende texto como nunca antes.</p>
+    <span class="version-badge">v1.0.0</span>
+  </header>
+
+  <main class="container">
+    <!-- Features Section -->
+    <section class="features-section">
+      <h2 class="section-title">Características</h2>
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>IA Avanzada</h3>
+          <p>Utiliza modelos de lenguaje de última generación para proporcionar análisis precisos y detallados de cualquier texto.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Rápido y Escalable</h3>
+          <p>Respuestas en milisegundos con capacidad para manejar miles de solicitudes simultáneamente.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Seguro</h3>
+          <p>Tus datos están protegidos con encriptación de extremo a extremo y nunca se usan para entrenar modelos.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Análisis Profundo</h3>
+          <p>Extrae sentimientos, entidades, categorías y métricas de calidad de cualquier documento o texto.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Endpoints Documentation -->
+    <section class="endpoints-section">
+      <h2 class="section-title">Documentación de Endpoints</h2>
+
+      <!-- GET / -->
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/</span>
+          <span class="endpoint-description">Información de la API</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Response</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="comment">// Información general de IntelliText API</span>
+{
+  <span class="property">"name"</span>: <span class="string">"IntelliText API"</span>,
+  <span class="property">"version"</span>: <span class="string">"1.0.0"</span>,
+  <span class="property">"description"</span>: <span class="string">"AI-powered text analysis API"</span>,
+  <span class="property">"endpoints"</span>: {
+    <span class="property">"health"</span>: <span class="string">"/health"</span>,
+    <span class="property">"analyze"</span>: <span class="string">"/analyze"</span>
+  }
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- GET /health -->
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/health</span>
+          <span class="endpoint-description">Health check del servicio</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Response</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="comment">// Estado del servicio</span>
+{
+  <span class="property">"status"</span>: <span class="string">"ok"</span>,
+  <span class="property">"uptime"</span>: <span class="number">123.456</span>,
+  <span class="property">"timestamp"</span>: <span class="string">"2026-02-05T14:30:00.000Z"</span>
+}</pre>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">curl</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre>curl https://your-api.elasticbeanstalk.com/health</pre>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">JavaScript (Fetch)</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="string">'https://your-api.elasticbeanstalk.com/health'</span>);
+<span class="keyword">const</span> data = <span class="keyword">await</span> response.json();
+console.log(data);</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- POST /analyze -->
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="endpoint-path">/analyze</span>
+          <span class="endpoint-description">Análisis principal de texto</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Request Body</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="comment">// Envía el texto a analizar</span>
+{
+  <span class="property">"text"</span>: <span class="string">"El producto es excelente, muy recomendado"</span>
+}</pre>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Response</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="comment">// Resultado del análisis</span>
+{
+  <span class="property">"sentiment"</span>: <span class="string">"positive"</span>,
+  <span class="property">"confidence"</span>: <span class="number">0.95</span>,
+  <span class="property">"entities"</span>: [<span class="string">"producto"</span>],
+  <span class="property">"suggestions"</span>: [<span class="string">"Excelente"</span>],
+  <span class="property">"metrics"</span>: {
+    <span class="property">"readability"</span>: <span class="string">"easy"</span>,
+    <span class="property">"wordCount"</span>: <span class="number">5</span>
+  }
+}</pre>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">curl</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre>curl -X POST https://your-api.elasticbeanstalk.com/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"text": "El producto es excelente"}'</pre>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">JavaScript (Fetch)</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="string">'https://your-api.elasticbeanstalk.com/analyze'</span>, {
+  <span class="property">method</span>: <span class="string">'POST'</span>,
+  <span class="property">headers</span>: { <span class="property">'Content-Type'</span>: <span class="string">'application/json'</span> },
+  <span class="property">body</span>: JSON.stringify({
+    <span class="property">text</span>: <span class="string">'El producto es excelente'</span>
+  })
+});
+<span class="keyword">const</span> result = <span class="keyword">await</span> response.json();
+console.log(result);</pre>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-title">Python (requests)</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="keyword">import</span> requests
+
+response = requests.post(
+    <span class="string">'https://your-api.elasticbeanstalk.com/analyze'</span>,
+    json={<span class="property">'text'</span>: <span class="string">'El producto es excelente'</span>}
+)
+result = response.json()
+print(result)</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>IntelliText API &copy; 2026 | <a href="#">Documentación</a> | <a href="#">GitHub</a></p>
+  </footer>
+
+  <script>
+    function copyCode(button) {
+      const codeBlock = button.closest('.code-block');
+      const code = codeBlock.querySelector('pre').textContent;
+      
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = button.textContent;
+        button.textContent = '¡Copiado!';
+        button.style.borderColor = '#10b981';
+        button.style.color = '#10b981';
+        
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.style.borderColor = '';
+          button.style.color = '';
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
