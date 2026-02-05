@@ -1,6 +1,6 @@
 # IntelliText API 🎯
 
-![CI Status](https://img.shields.io/github/actions/workflow/status/pacell/IntelliText-api/ci.yml?branch=Main)
+![CI Status](https://img.shields.io/github/actions/workflow/status/pieropaccc/IntelliText-api/ci.yml?branch=Main)
 ![Node.js](https://img.shields.io/badge/node.js-20-339933?logo=node.js)
 ![Express](https://img.shields.io/badge/express-5.2.1-000000?logo=express)
 ![Groq](https://img.shields.io/badge/groq-llama--3.1-ff6b35)
